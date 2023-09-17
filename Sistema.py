@@ -1,4 +1,5 @@
 from Lista_Simple import ListaSimple
+from Dron import Dron
 
 class Sistema():
 
@@ -7,6 +8,8 @@ class Sistema():
         self.alturamax = AlturaMax
         self.cantidadDrones = CantidadDrones
         self.listaDrones = ListaSimple()
+        self.CrearListaAlturas()
+        #self.imprimir()
 
     def getNombre(self):
         return self.nombre
@@ -19,8 +22,13 @@ class Sistema():
     
     def CrearListaAlturas(self):
         for i in range (1, int(self.cantidadDrones)+1):          #Creando la lista de tiempos hasta tiempo maximo
-            pass
-            #objAltura  = Tiempo(i, self.alturamax)       #Creando los objetos tiempos
-            #self.listaDrones.agregarFinal(objTiempo)       #Insertando los objetos a la lista de tiempos
-    
+            objdron = Dron(i,self.alturamax)            #Creando los objeto dron
+            self.listaDrones.agregarFinal(objdron)               #Insertando el objeto a la lista de Drones
 
+    def imprimir(self):
+        print("_____Drones para sistema: ", self.getNombre(), "________")
+        ObjDron = self.listaDrones.getInicio()
+
+        while ObjDron != None:
+            print(ObjDron.getDato().getnumerodron())
+            ObjDron = ObjDron.getSiguiente()
