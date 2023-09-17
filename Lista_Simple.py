@@ -10,6 +10,9 @@ class ListaSimple():
 
     def getInicio(self):
         return self.nodoInicio
+    
+    def getFin(self):
+        return self.nodoFinal
 
     def estaVacia(self):
         return self.nodoInicio == None
@@ -81,7 +84,7 @@ class ListaSimple():
 
     def imprimir(self):
         tmp = self.nodoInicio
-        while tmp != None:
+        while tmp:
             print(tmp.getDato())
             tmp = tmp.getSiguiente()
 
