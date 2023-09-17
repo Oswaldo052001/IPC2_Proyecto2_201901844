@@ -1,17 +1,19 @@
 import xml.etree.ElementTree as ET
 from Lista_Simple import ListaSimple
+from Sistema import Sistema
 from Cola import Cola
 
 class xml():
 
     def __init__(self,ruta):
         self.Inventario_drones = Cola()
-        self.listSistema_drones = ListaSimple()
+        self.listSistemas = ListaSimple()
         self.Ilist_mensajes = ListaSimple()
         self.archivo = ET.parse(ruta).getroot()
-        self.Leerinventario()
+        #self.Leerinventario()
         #self.LeerMensajes()
-        #self.LeerSistemaDrones()
+        self.LeerSistemaDrones()
+        self.comprobar()
     
 
     def Leerinventario(self):
@@ -29,17 +31,15 @@ class xml():
                 alturamax = sistemaDrones.find('alturaMaxima').text
                 cantidadDrons = sistemaDrones.find('cantidadDrones').text
                 
-                print("Nombre:",nombre)
-                print("Altura maxima:",alturamax)
-                print("Cantidad de drones:",cantidadDrons)
+                #print("Nombre:",nombre)
+                #print("Altura maxima:",alturamax)
+                #print("Cantidad de drones:",cantidadDrons)
 
-                contenido = sistemaDrones.find('contenido')
-                alturas = contenido.find('alturas')
+                tmpSistema = Sistema(nombre,alturamax,cantidadDrons)   # Creando objeto sistema que hay en el xml
+                self.listSistemas.agregarFinal(tmpSistema)  # Agregando sistema a la lista de sistemas
+
+                self.agregarValoresAlturas(sistemaDrones) 
                 
-                for altura in alturas.findall('altura'):
-                    Altura = altura.get('valor')
-                    letra = altura.text
-                    print(Altura,letra)
 
 
     def LeerMensajes(self):
@@ -58,7 +58,53 @@ class xml():
                     print (dron,posicion)
         
 
+    def agregarValoresAlturas(self,SistemaDron):
+
+        Sistema = self.listSistemas.getFin().getDato()
+        dron = Sistema.listaDrones.getInicio()
+      
+        for contenido in SistemaDron.findall('contenido'):
+            nombreDron = contenido.find('dron').text
+            alturas = contenido.find('alturas')
+
+            dron.getDato().setNombreDron(nombreDron)        #Falta validar que exista en el inventario
+
+            for altura in alturas.findall('altura'):
+                Altura = altura.get('valor')
+                letra = altura.text
+
+                Alturas = dron.getDato().ListaAlturas.getFin()
+                while Alturas:
+                    if int(Altura) == int(Alturas.getDato().getAltura()):
+                        Alturas.getDato().setValor(letra)
+
+                    Alturas = Alturas.getAnterior()
+
+            dron = dron.getSiguiente()
+
     
+    def comprobar(self):
+        
+        Sistema = self.listSistemas.getInicio()
+
+        while Sistema:                                      #Este while recorre todos los Sistemas guardados
+            nombreSistema = Sistema.getDato().getNombre()
+            print(nombreSistema)
+            dron = Sistema.getDato().listaDrones.getInicio()    #Obteniendo el dron inicial de este sistema
+            while dron:                                         #Este while recorre todos los drones que hay
+                nombredron = dron.getDato().getNombreDron() 
+                print(nombredron)
+                altura = dron.getDato().ListaAlturas.getInicio()    #Obteniendo la primera altura de este dron
+                while altura:                                       #Este while recorre todas las aturas del dron
+                    Altu = altura.getDato().getAltura()
+                    valor = altura.getDato().getValor()
+                    print(Altu,valor)
+                    altura = altura.getSiguiente()                  #Cambiando de altura
+                dron = dron.getSiguiente()                          #Cambiando de dron
+            Sistema = Sistema.getSiguiente()                        #Cambiando de sistema
+
+
+
 
 objeto = xml("archivo1.xml")
-#objeto.getSenal()
+
