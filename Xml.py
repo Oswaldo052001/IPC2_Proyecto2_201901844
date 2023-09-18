@@ -1,27 +1,27 @@
 import xml.etree.ElementTree as ET
 from Lista_Simple import ListaSimple
 from Sistema import Sistema
-from Cola import Cola
+from Inventario import Cola
 
 class xml():
-
+    Inventario_drones = Cola()
+    listSistemas = ListaSimple()
+    Ilist_mensajes = ListaSimple()
+    
     def __init__(self,ruta):
-        self.Inventario_drones = Cola()
-        self.listSistemas = ListaSimple()
-        self.Ilist_mensajes = ListaSimple()
         self.archivo = ET.parse(ruta).getroot()
-        #self.Leerinventario()
+        self.Leerinventario()
+        #self.imprimirInventario()
         #self.LeerMensajes()
-        self.LeerSistemaDrones()
-        self.comprobar()
+        #self.LeerSistemaDrones()
+        #self.comprobar()
     
 
     def Leerinventario(self):
-
         for inventario in self.archivo.findall('listaDrones'):    # este for va a recorer todo el listado de drones que esten en el doc
             for nombreDron in inventario.findall('dron'):
-                print(nombreDron.text)
-                self.Inventario_drones.enconlar(nombreDron.text)
+                if self.VerificarDronRepetido(nombreDron.text):
+                    self.Inventario_drones.enconlar(nombreDron.text)
                 
     
     def LeerSistemaDrones(self):
@@ -79,7 +79,6 @@ class xml():
                         Alturas.getDato().setValor(letra)
 
                     Alturas = Alturas.getAnterior()
-
             dron = dron.getSiguiente()
 
     
@@ -104,7 +103,17 @@ class xml():
             Sistema = Sistema.getSiguiente()                        #Cambiando de sistema
 
 
+    def VerificarDronRepetido(self,nombre):
+        unico = True
+        dron = self.Inventario_drones.getInicio()
+        while dron:
+            if dron.getDato() == nombre:
+                unico = False
+            dron = dron.getSiguiente()
+        return unico
 
+    def obtenerIventario(self):
+        return self.Inventario_drones
 
-objeto = xml("archivo1.xml")
+#objeto = xml("archivo1.xml")
 

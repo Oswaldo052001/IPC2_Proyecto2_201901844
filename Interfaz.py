@@ -1,11 +1,15 @@
 import tkinter as tk
-
+from tkinter import filedialog
+from tkinter import messagebox
+from Xml import xml
+from functools import partial
 
 class Interfaz():
 
     def __init__(self) -> None:
         self.ventanaPrincipal = tk.Tk()
         self.abrirarchivo =  False
+        self.nombreDron = None
         self.componentes()
 
 
@@ -27,15 +31,15 @@ class Interfaz():
         
     
         self.CrearPestañaArchivo(barra_menus)
-        self.CrearPestañaAnalisis(barra_menus)
-        self.CrearPestañaTokens(barra_menus)
-        self.CrearPestañaErrores(barra_menus)
+        self.CrearGestionDrones(barra_menus)
+        self.CrearPestañaSistema(barra_menus)
+        self.CrearPestañaMensaje(barra_menus)
 
         self.ventanaPrincipal.config(menu=barra_menus)
         
         #-------------------------------------- IMAGEN --------------------------------------------------------
-        self.insertarImg("#009929",120,15,"Logo")
-        self.insertarImg2("#009929",400,150,"Escudo")
+        self.insertarImg("#009929",120,15,"Logo",self.ventanaPrincipal)
+        self.insertarImg2("#009929",400,150,"Escudo",self.ventanaPrincipal)
         
         #---------------------------------------ETIQUETAS------------------------------------------------------
         self.crearetiqueta(620, 10, "29-06-22","Bahnschrift SemiLight Condensed",12,"black","#009929",self.ventanaPrincipal)  
@@ -46,12 +50,23 @@ class Interfaz():
             
 
         #--------------------------------------BOTONES---------------------------------------------------------
-        self.insertarboton(40,280,"Documentación","#8d4925",2,12,1,self.ventanaPrincipal)
-        self.insertarboton(200,280,"Información Personal","#8d4925",2,16,1,self.ventanaPrincipal)
+        self.insertarboton(40,280,"Documentación","#8d4925",2,12,"Documentacion",self.ventanaPrincipal)
+        self.insertarboton(200,280,"Información Personal","#8d4925",2,16,"Informacion",self.ventanaPrincipal)
         
         self.ventanaPrincipal.mainloop()
 
     
+    def crearVentana(self,ventana,x,y,titulo,fondo):
+        tamx = x
+        tamy = y
+        x_ventana = ventana.winfo_screenwidth() // 2 - tamx // 2
+        y_ventana = ventana.winfo_screenheight() // 2 - tamy // 2
+        posicion = str(tamx) + "x" + str(tamy) + "+" + str(x_ventana) + "+" + str(y_ventana) #creación de la ventana
+        ventana.geometry(posicion) #insertar posición
+        ventana.title(titulo) #insertar titulo
+        ventana.config(bg=fondo) #insertar fondo
+        ventana.resizable(0,0)
+
        #FUNCIÓN PARA CREAR ETIQUETAS
     def crearetiqueta(self,tamx,tamy,texto,fuente,tamaño, color,fondo,ventana):
 
@@ -61,21 +76,33 @@ class Interfaz():
         self.etiqueta.config(fg=color) #insertar color del texto
         self.etiqueta.place(x = tamx, y = tamy) # insertar posicion
     
+        #FUNCION PARA CREAR UN CUADRO DE TEXTO
+    def crear_cuadrodeTexto(self,tamx,tamy,fuente,tamaño,alto,largo,Caja):
+
+        Caja.config(font=(fuente, tamaño),width=largo,height=alto,wrap="none") #insertar tipo y tamaño de fuente
+        Caja.place(x = tamx, y = tamy) # insertar posicion
+        self.Texto = Caja
 
       #FUNCION PARA INSERTAR UN IMAGEN
-    def insertarImg(self,fondo,posx,posy,nombre):
+    def insertarImg(self,fondo,posx,posy,nombre,ventana):
         self.imagenL = tk.PhotoImage(file = "Img_interfaz/"+nombre+".png")   #Seleccionar imagen
-        self.imagen_sub= self.imagenL.subsample(5)  # Minimizar la imagen
-        self.lblimagen = tk.Label(self.ventanaPrincipal, image= self.imagen_sub) #Agregarla al label
+        self.imagen_sub = self.imagenL.subsample(5)  # Minimizar la imagen
+        self.lblimagen = tk.Label(ventana, image= self.imagen_sub) #Agregarla al label
         self.lblimagen.config(bg = fondo) # insertando color de fondo al label
         self.lblimagen.place(x = posx, y = posy) # Insertando su ubicación
 
-          #FUNCION PARA INSERTAR UN IMAGEN
-    def insertarImg2(self,fondo,posx,posy,nombre):
+    def insertarImg2(self,fondo,posx,posy,nombre,ventana):
         self.imagenL2 = tk.PhotoImage(file = "Img_interfaz/"+nombre+".png") #Seleccionar imagen
-        self.lblimagen2 = tk.Label(self.ventanaPrincipal, image= self.imagenL2) #Insertando al label
+        self.lblimagen2 = tk.Label(ventana, image= self.imagenL2) #Insertando al label
         self.lblimagen2.config(bg = fondo) #insertando color de fondo al label
         self.lblimagen2.place(x = posx, y = posy) #Insertando su ubicación
+
+    def insertarImg3(self,fondo,posx,posy,nombre,ventana):
+        self.imagenL3 = tk.PhotoImage(file = "Img_interfaz/"+nombre+".png") #Seleccionar imagen
+        self.imagen_sub3 = self.imagenL3.subsample(3)  # Minimizar la imagen
+        self.lblimagen3 = tk.Label(ventana, image= self.imagen_sub3) #Insertando al label
+        self.lblimagen3.config(bg = fondo) #insertando color de fondo al label
+        self.lblimagen3.place(x = posx, y = posy) #Insertando su ubicación
 
 
     #FUNCIÓN PARA CREAR BOTONES
@@ -84,8 +111,11 @@ class Interfaz():
         self.btn = tk.Button(ventana,text = titulo, height= ancho, width= largo, bg = color, fg='white',
         font=("Roboto Cn",12), relief="raised", borderwidth=4, cursor="hand2") #Creación del boton
         
-        if tipo == 1:
+        if tipo == "Documentacion":
             self.btn["command"] = print("hola")
+
+        if tipo =="CrearDron":
+            self.btn["command"] = self.guardarDron
 
         
         self.btn.place(x=tamx, y=tamy) #insertar posicion
@@ -97,44 +127,23 @@ class Interfaz():
         menusarchivos = tk.Menu(menubase, tearoff=False, font = ("Avenir Next LT Pro Demi",11))
 
         menusarchivos.add_command(
-            label="Nuevo",
-            accelerator="Ctrl+N",
-            #command=self.nuevo,
+            label="Cargar",
+            command=self.leerArchivo,
             compound=tk.LEFT
         )
         # Insertando el comando de acceso rápido
         #self.ventanaPrincipal.bind_all("<Control-n>", self.nuevo)
         
         menusarchivos.add_command(
-            label="Abrir",
-            accelerator="Ctrl+A",
+            label="Generar",
             #command=self.Abrir_archivo,
             compound=tk.LEFT
         )
         # Insertando el comando de acceso rápido
         #self.ventanaPrincipal.bind_all("<Control-a>", self.Abrir_archivo)
                        
-        menusarchivos.add_command(
-            label="Guardar",
-            accelerator="Ctrl+G",
-            #command=self.guardar,
-            compound=tk.LEFT
-        )
-        # Insertando el comando de acceso rápido
-        #self.ventanaPrincipal.bind_all("<Control-g>", self.guardar)
-
-        menusarchivos.add_command(
-            label="GuardarComo",
-            accelerator="Ctrl+S",
-            #command=self.Guardarcomo,
-            compound=tk.LEFT
-        )
-
-        # Insertando el comando de acceso rápido
-        #self.ventanaPrincipal.bind_all("<Control-s>", self.Guardarcomo)
 
         menusarchivos.add_separator()
-
         menusarchivos.add_command(
             label="Salir", 
             command= self.Salir,
@@ -149,62 +158,126 @@ class Interfaz():
 
 #--------------------------------------------------------------------------------------------------------------------------
 
-    def CrearPestañaAnalisis(self,menubase):
+    def CrearGestionDrones(self,menubase):
        
-        menuAnalisis = tk.Menu(menubase, tearoff=False, font = ("Avenir Next LT Pro Demi",11))
+        menuDrones = tk.Menu(menubase, tearoff=False, font = ("Avenir Next LT Pro Demi",11))
 
-        menuAnalisis.add_command(
-            label="Generar Sentencia",
-            accelerator="Ctrl+Q",
-            #command=self.analisis,
+        menuDrones.add_command(
+            label="Inventario",
+            command=self.MostrarInventario,
             compound=tk.LEFT
         )
 
-        # Insertando el comando de acceso rápido
-        #self.ventanaPrincipal.bind_all("<Control-q>", self.analisis)
+        menuDrones.add_command(
+            label="Agregar",
+            command=self.NuevoDron,
+            compound=tk.LEFT
+        )
         
         # Insertarla en la ventana principal.
-        menubase.add_cascade(menu=menuAnalisis, label="Analisis")
+        menubase.add_cascade(menu=menuDrones, label="Drones")
  
 #-------------------------------------------------------------------------------------------------------------------------
 
-    def CrearPestañaTokens(self,menubase):
+    def CrearPestañaSistema(self,menubase):
        
-        menuTokens = tk.Menu(menubase, tearoff=False, font = ("Avenir Next LT Pro Demi",11))
+        menuSistema = tk.Menu(menubase, tearoff=False, font = ("Avenir Next LT Pro Demi",11))
 
-        menuTokens.add_command(
-            label="Ver Tokens",
-            accelerator="Ctrl+T",
+        menuSistema.add_command(
+            label="Ver Gráfica",
             #command=self.Tokens,
             compound=tk.LEFT
         )
-        # Insertando el comando de acceso rápido
-        #self.ventanaPrincipal.bind_all("<Control-t>", self.Tokens)
         
         # Insertarla en la ventana principal.
-        menubase.add_cascade(menu=menuTokens, label="Tokens")
+        menubase.add_cascade(menu=menuSistema, label="Sistema")
 
 #--------------------------------------------------------------------------------------------------------------------------
 
-    def CrearPestañaErrores(self,menubase):
+    def CrearPestañaMensaje(self,menubase):
        
-        menuErrores = tk.Menu(menubase, tearoff=False, font = ("Avenir Next LT Pro Demi",11))
+        menuMensaje = tk.Menu(menubase, tearoff=False, font = ("Avenir Next LT Pro Demi",11))
 
-        menuErrores.add_command(
-            label="Mostrar Errores",
-            accelerator="Ctrl+E",
+        menuMensaje.add_command(
+            label="Mostrar mensajes",
             #command=self.errores,
             compound=tk.LEFT
         )
-        # Insertando el comando de acceso rápido
-       #self.ventanaPrincipal.bind_all("<Control-e>", self.errores)
-        
+
+        menuMensaje.add_command(
+            label="Mostrar instrucciones",
+            #command=self.errores,
+            compound=tk.LEFT
+        )
+
+    
         # Insertarla en la ventana principal.
-        menubase.add_cascade(menu=menuErrores, label="Errores")
+        menubase.add_cascade(menu=menuMensaje, label="Mensaje")
 
 
-#------------------------------------ FUNCIONES -----------------------------------------------------
-    def Salir(self,event = None):
+#-------------------------------------------------------- FUNCIONES -----------------------------------------------------
+    def Salir(self):
         self.ventanaPrincipal.destroy()
+
+
+    def leerArchivo(self):
+        filename = filedialog.askopenfilename(title="buscar archivo",filetypes=(("archivos xml",'*.xml'),("todos los archivos",'*')))   #Obteniendo la dirección donde se encuentra el archivo
+        try:
+            xml(filename)  #Ingresando a la clase xml y almacenando la imformación del xml
+            messagebox.showinfo(message="SE CARGO CORRECTAMENTE", title="Msg")  # Si no hubo problema mostrará este mensaje 
+            self.abrirarchivo = True  
+        except:
+            messagebox.showinfo(message="A OCURRIDO UN ERROR AL CARGAR EL ARCHIVO \n VUELVA A INTENTARLO", title="ERROR")  # Si hubo problema mostrará este mensaje
+
+
+    def MostrarInventario(self):
+        dron = xml.Inventario_drones.getInicio()
+        if dron:
+            ventanaInventario = tk.Toplevel()
+            cajatexto = tk.Text(ventanaInventario)
+            self.crearVentana(ventanaInventario,300,200,"Inventario","#2D572C")
+            self.crearetiqueta(20, 20, "Los drones ingresados son los siguientes:","Bahnschrift SemiLight Condensed",12,"white","#2D572C",ventanaInventario)  
+            self.crear_cuadrodeTexto(20,50,"Arial",12,7,28,cajatexto)
+
+            dron = xml.Inventario_drones.getInicio()
+            contador = 1
+            while dron:
+                mensaje = str(contador)+") "+dron.getDato()+"\n"
+                cajatexto.insert(tk.INSERT,mensaje)
+                dron = dron.getSiguiente()
+                contador += 1
+        else:
+            messagebox.showinfo(message="TODAVIA NO SE HA INGRESADO NINGUN DRON", title="VUELVA A INTENTAR")  # Si hubo problema mostrará este mensaje
+
+
+    def NuevoDron(self):
+            ventanaDron = tk.Toplevel()
+            cajatexto = tk.Text(ventanaDron)
+            self.crearVentana(ventanaDron,600,200,"Crear Dron","#BDECB6")
+            self.crearetiqueta(20, 20, "Ingrese el nombre del dron: ","Bahnschrift SemiLight Condensed",20,"#ea2ce4","#BDECB6",ventanaDron)  
+
+            #COMPONENTES VENTANA
+            self.crear_cuadrodeTexto(20,70,"Arial",20,1,20,cajatexto)
+            self.nombreDron = cajatexto
+            self.insertarImg3("#BDECB6",400,10,"dron",ventanaDron)
+            self.insertarboton(110,120,"Crear","#efa229",1,12,"CrearDron",ventanaDron)
+            
+            
+    def guardarDron(self):
+        name = self.nombreDron.get(1.0,"end-1c")
+        unico = True
+        dron = xml.Inventario_drones.getInicio()
+        while dron:
+            if dron.getDato() == name:
+                unico = False
+                messagebox.showinfo(message="ESE NOMBRE YA EXISTE", title="ERROR")  # Si hubo problema mostrará este mensaje
+                self.NuevoDron()
+            dron = dron.getSiguiente()
+    
+        if unico:
+            xml.Inventario_drones.enconlar(name)
+            messagebox.showinfo(message="SE AGREGÓ CORRECTAMENTE", title="EXITO")  # Si hubo problema mostrará este mensaje
+            self.NuevoDron()
+    
  
 app = Interfaz()
