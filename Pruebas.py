@@ -48,5 +48,16 @@ else:
 
 hola = True
 
+pa = "Hola1"
+p2 = "hola1"
+
+if pa.lower() == p2.lower():
+    print("son iguales")
+else:
+    print("no son iguales")
+
+for i in range (1, 5): 
+    print(i)
+
 if hola:
     print("holaaa")
