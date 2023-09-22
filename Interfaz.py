@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 from Xml import xml
-from functools import partial
+from Graph import Graph
 
 class Interfaz():
 
@@ -10,6 +10,7 @@ class Interfaz():
         self.ventanaPrincipal = tk.Tk()
         self.abrirarchivo =  False
         self.nombreDron = None
+        self.nombreSistema = None
         self.componentes()
 
 
@@ -77,11 +78,11 @@ class Interfaz():
         self.etiqueta.place(x = tamx, y = tamy) # insertar posicion
     
         #FUNCION PARA CREAR UN CUADRO DE TEXTO
-    def crear_cuadrodeTexto(self,tamx,tamy,fuente,tamaño,alto,largo,Caja):
+    def crear_cuadrodeTexto(self,tamx,tamy,fuente,tamaño,alto,largo,color,Caja):
 
-        Caja.config(font=(fuente, tamaño),width=largo,height=alto,wrap="none") #insertar tipo y tamaño de fuente
+        Caja.config(font=(fuente, tamaño),width=largo,height=alto,wrap="none",bg=color) #insertar tipo y tamaño de fuente
         Caja.place(x = tamx, y = tamy) # insertar posicion
-        self.Texto = Caja
+    
 
       #FUNCION PARA INSERTAR UN IMAGEN
     def insertarImg(self,fondo,posx,posy,nombre,ventana):
@@ -117,6 +118,8 @@ class Interfaz():
         if tipo =="CrearDron":
             self.btn["command"] = self.guardarDron
 
+        if tipo == "GraficarSistema":
+            self.btn["command"] = self.crearGrafica
         
         self.btn.place(x=tamx, y=tamy) #insertar posicion
         
@@ -185,7 +188,7 @@ class Interfaz():
 
         menuSistema.add_command(
             label="Ver Gráfica",
-            #command=self.Tokens,
+            command=self.mostrarSistema,
             compound=tk.LEFT
         )
         
@@ -237,15 +240,16 @@ class Interfaz():
             cajatexto = tk.Text(ventanaInventario)
             self.crearVentana(ventanaInventario,300,200,"Inventario","#2D572C")
             self.crearetiqueta(20, 20, "Los drones ingresados son los siguientes:","Bahnschrift SemiLight Condensed",12,"white","#2D572C",ventanaInventario)  
-            self.crear_cuadrodeTexto(20,50,"Arial",12,7,28,cajatexto)
+            self.crear_cuadrodeTexto(20,50,"Arial",12,7,28,"white",cajatexto)
 
-            dron = xml.Inventario_drones.getInicio()
             contador = 1
             while dron:
                 mensaje = str(contador)+") "+dron.getDato()+"\n"
                 cajatexto.insert(tk.INSERT,mensaje)
                 dron = dron.getSiguiente()
                 contador += 1
+            
+            cajatexto.configure(state='disabled')
         else:
             messagebox.showinfo(message="TODAVIA NO SE HA INGRESADO NINGUN DRON", title="VUELVA A INTENTAR")  # Si hubo problema mostrará este mensaje
 
@@ -257,7 +261,7 @@ class Interfaz():
             self.crearetiqueta(20, 20, "Ingrese el nombre del dron: ","Bahnschrift SemiLight Condensed",20,"#ea2ce4","#BDECB6",ventanaDron)  
 
             #COMPONENTES VENTANA
-            self.crear_cuadrodeTexto(20,70,"Arial",20,1,20,cajatexto)
+            self.crear_cuadrodeTexto(20,70,"Arial",20,1,20,"white",cajatexto)
             self.nombreDron = cajatexto
             self.insertarImg3("#BDECB6",400,10,"dron",ventanaDron)
             self.insertarboton(110,120,"Crear","#efa229",1,12,"CrearDron",ventanaDron)
@@ -278,6 +282,51 @@ class Interfaz():
             xml.Inventario_drones.enconlar(name)
             messagebox.showinfo(message="SE AGREGÓ CORRECTAMENTE", title="EXITO")  # Si hubo problema mostrará este mensaje
             self.NuevoDron()
+
+    
+    def mostrarSistema(self):
+        sistema = xml.listSistemas.getInicio()
+        if sistema:
+            ventanaSistema = tk.Toplevel()
+            cajatexto = tk.Text(ventanaSistema)
+            nameSiste = tk.Text(ventanaSistema)
+            self.crearVentana(ventanaSistema,500,300,"Graficar","#ED6A5A")
+            self.crearetiqueta(20, 20, "SISTEMAS INGRESADOS","Gill Sans Ultra Bold Condensed",20,"#FFFD82","#ED6A5A",ventanaSistema)  
+            self.crearetiqueta(298, 70, "Ingrese el nombre del sistema \nque desea graficar","Bahnschrift SemiLight Condensed",14,"#F4F1BB","#ED6A5A",ventanaSistema)  
+            self.crear_cuadrodeTexto(20,70,"Bahnschrift SemiCondensed",12,11,33,"white",cajatexto)
+            self.crear_cuadrodeTexto(312,150,"Arial",15,1,15,"#9bc1bc",nameSiste)
+            self.insertarboton(350,200,"Graficar","#1B998B",1,8,"GraficarSistema",ventanaSistema)
+            self.nombreSistema = nameSiste
+
+            contador = 1
+            while sistema:
+                mensaje = "   "+str(contador)+") "+sistema.getDato().getNombre()+"\n"
+                cajatexto.insert(tk.INSERT,mensaje)
+                sistema = sistema.getSiguiente()
+                contador += 1
+            cajatexto.configure(state='disabled')
+        else:
+            messagebox.showinfo(message="TODAVIA NO SE HA INGRESADO NINGUN SISTEMA", title="VUELVA A INTENTAR")  # Si hubo problema mostrará este mensaje
+
+
+    def crearGrafica(self):
+        name = self.nombreSistema.get(1.0,"end-1c")
+        sistema = xml.listSistemas.getInicio()
+        encontro = False
+
+        while sistema:
+            if sistema.getDato().getNombre().lower() == name.lower():
+                encontro = True
+                grafica = Graph(sistema.getDato(),"Sistema_"+name)
+                grafica.crearGraficaOriginal()
+                messagebox.showinfo(message="SE GRAFICÓ CORRECTAMENTE", title="REALIZADO")  # Si hubo problema mostrará este mensaje
+            sistema = sistema.getSiguiente()
+        
+        if encontro == False:
+            messagebox.showinfo(message="EL NOMBRE INGRESADO NO EXISTE", title="VUELVA A INTENTAR")  # Si hubo problema mostrará este mensaje
+
+
+
     
  
 app = Interfaz()

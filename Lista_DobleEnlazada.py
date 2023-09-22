@@ -24,9 +24,22 @@ class Lista_doble():
             nuevo.setSiguiente(self.nodoInicio)
             self.nodoInicio.setAnterior(nuevo)
             self.nodoInicio = nuevo
-
-        
         self.size += 1
+
+    
+    def AgregarFinal(self,Dato):
+        if self.nodoInicio is None:
+            nuevo = NodoD(dato=Dato,id=self.id)
+            self.nodoFin = nuevo
+            self.nodoInicio = nuevo
+        else:     
+            nuevo = NodoD(dato = Dato, id=self.id )
+            self.id += 1
+            nuevo.setAnterior(self.nodoFin)
+            self.nodoFin.setSiguiente(nuevo)
+            self.nodoFin = nuevo
+        self.size += 1
+        
 
     def imprimir_Adelante_atras(self):
         tmp = self.nodoInicio

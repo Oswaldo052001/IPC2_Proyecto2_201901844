@@ -2,6 +2,9 @@ import xml.etree.ElementTree as ET
 from Lista_Simple import ListaSimple
 from Sistema import Sistema
 from Inventario import Cola
+from Mensaje import MensajeS
+from Instruccion import Instruccion
+from Graph import Graph
 
 class xml():
     Inventario_drones = Cola()
@@ -11,11 +14,17 @@ class xml():
     def __init__(self,ruta):
         self.archivo = ET.parse(ruta).getroot()
         self.Leerinventario()
-        #self.imprimirInventario()
-        #self.LeerMensajes()
-        #self.LeerSistemaDrones()
+        self.LeerSistemaDrones()
+        self.LeerMensajes()
+        self.prueba()
         #self.comprobar()
     
+
+    def prueba(self):
+        sistema = self.listSistemas.getInicio().getDato()
+        grafica = Graph(sistema,"prueba")
+        grafica.crearGraficaOriginal()
+
 
     def Leerinventario(self):
         for inventario in self.archivo.findall('listaDrones'):    # este for va a recorer todo el listado de drones que esten en el doc
@@ -37,7 +46,6 @@ class xml():
 
                 tmpSistema = Sistema(nombre,alturamax,cantidadDrons)   # Creando objeto sistema que hay en el xml
                 self.listSistemas.agregarFinal(tmpSistema)  # Agregando sistema a la lista de sistemas
-
                 self.agregarValoresAlturas(sistemaDrones) 
                 
 
@@ -48,14 +56,19 @@ class xml():
                 nombre = mensaje.get("nombre")
                 nombreSistema = mensaje.find('sistemaDrones').text
                 Instrucciones = mensaje.find('instrucciones')
-                                
-                print ("Nombre:",nombre)
-                print("Sistema de Drones a usar:",nombreSistema)
+
+                #print ("Nombre:",nombre)
+                #print("Sistema de Drones a usar:",nombreSistema)
+                
+                tmpmensaje = MensajeS(nombre,nombreSistema)   # Creando objeto sistema que hay en el xml
+                self.Ilist_mensajes.agregarFinal(tmpmensaje)  # Agregando sistema a la lista de sistemas
 
                 for instruccion in Instrucciones.findall('instruccion'):
                     dron = instruccion.get("dron")
                     posicion = instruccion.text
-                    print (dron,posicion)
+                    objinstruccion = Instruccion(dron,posicion)  
+                    tmpmensaje.listaInstrucciones.agregarFinal(objinstruccion)
+                    
         
 
     def agregarValoresAlturas(self,SistemaDron):
@@ -85,7 +98,6 @@ class xml():
     def comprobar(self):
         
         Sistema = self.listSistemas.getInicio()
-
         while Sistema:                                      #Este while recorre todos los Sistemas guardados
             nombreSistema = Sistema.getDato().getNombre()
             print(nombreSistema)
@@ -103,6 +115,22 @@ class xml():
             Sistema = Sistema.getSiguiente()                        #Cambiando de sistema
 
 
+        
+        lista = self.Ilist_mensajes.getInicio()
+        while lista:
+            nombre = lista.getDato().getNombreMensaje()
+            sistema = lista.getDato().getNombreSistema()
+            print(nombre,sistema)
+
+            instruccion = lista.getDato().listaInstrucciones.getInicio()
+            while instruccion:
+                dron = instruccion.getDato().getNombreDron()
+                posicion = instruccion.getDato().getPosicion()
+                print (dron,posicion)
+                instruccion = instruccion.getSiguiente()
+            lista = lista.getSiguiente()
+
+
     def VerificarDronRepetido(self,nombre):
         unico = True
         dron = self.Inventario_drones.getInicio()
@@ -115,5 +143,5 @@ class xml():
     def obtenerIventario(self):
         return self.Inventario_drones
 
-#objeto = xml("archivo1.xml")
+objeto = xml("archivo1.xml")
 

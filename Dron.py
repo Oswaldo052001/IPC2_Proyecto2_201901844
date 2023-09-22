@@ -39,15 +39,15 @@ class Dron():
     def asignaciondeAlturas(self):
         for i in range (1, int(self.alturasmax)+1):          #Creando la lista de tiempos hasta tiempo maximo
             objaltura = Alturas(i)            #Creando los objeto dron
-            self.ListaAlturas.AgregarInicio(objaltura)               #Insertando el objeto a la lista de Drones
+            self.ListaAlturas.AgregarFinal(objaltura)               #Insertando el objeto a la lista de Drones
 
 
     def imprimir(self):
         print("_____Alturas para dron: ", self.getnumerodron(), "________")
-        ojbAlturas = self.ListaAlturas.getFin()
+        ojbAlturas = self.ListaAlturas.getInicio()
 
         while ojbAlturas != None:
             print(ojbAlturas.getDato().getAltura())
-            ojbAlturas = ojbAlturas.getAnterior()
+            ojbAlturas = ojbAlturas.getSiguiente()
 
 
