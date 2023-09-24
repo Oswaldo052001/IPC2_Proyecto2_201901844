@@ -39,7 +39,7 @@ class ListaSimple():
             self.nodoInicio = nuevo
         self.size += 1
 
-    def agregarEnOrden(self, dato):
+    def ordenarAlfabeticamente(self, dato):
         nuevo = Nodo(self.id, dato)
         self.id += 1
         if self.estaVacia():
@@ -58,6 +58,8 @@ class ListaSimple():
             nuevo.setSiguiente(tmp.getSiguiente())
             tmp.setSiguiente(nuevo)
         self.size += 1
+
+
 
     def eliminarInicio(self):
         if not self.estaVacia():

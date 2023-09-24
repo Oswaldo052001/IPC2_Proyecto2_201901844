@@ -5,6 +5,7 @@ class Alturas():
     def __init__(self, altura):
             self.altura = altura
             self.valor = None
+            self.posicion = 0
             #self.imprimir()
 
     def getAltura(self):

@@ -6,6 +6,7 @@
       <dron>DronW</dron>
       <dron>DronZ</dron>
       <dron>DronA</dron>
+      <dron>DronA</dron>
    </listaDrones>
    <listaSistemasDrones>
       <sistemaDrones nombre="SD1">
