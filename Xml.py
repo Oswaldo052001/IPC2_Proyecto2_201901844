@@ -1,22 +1,25 @@
 import xml.etree.ElementTree as ET
 from Lista_Simple import ListaSimple
 from Sistema import Sistema
-from Inventario import Cola
+from Cola import Cola
 from Mensaje import MensajeS
 from Instruccion import Instruccion
 from Graph import Graph
+from ProcesarMensaje import procesar
 
 class xml():
     Inventario_drones = Cola()
     listSistemas = ListaSimple()
     Ilist_mensajes = ListaSimple()
+    mensajesordenados = Cola()
     
     def __init__(self,ruta):
         self.archivo = ET.parse(ruta).getroot()
         self.Leerinventario()
         self.LeerSistemaDrones()
         self.LeerMensajes()
-        self.prueba()
+        self.procesarmensaje("msg")
+        #self.prueba()
         #self.comprobar()
     
 
@@ -59,7 +62,8 @@ class xml():
 
                 #print ("Nombre:",nombre)
                 #print("Sistema de Drones a usar:",nombreSistema)
-                
+
+                self.mensajesordenados.enconlar(nombre)
                 tmpmensaje = MensajeS(nombre,nombreSistema)   # Creando objeto sistema que hay en el xml
                 self.Ilist_mensajes.agregarFinal(tmpmensaje)  # Agregando sistema a la lista de sistemas
 
@@ -97,7 +101,7 @@ class xml():
     
     def comprobar(self):
         
-        Sistema = self.listSistemas.getInicio()
+        '''Sistema = self.listSistemas.getInicio()
         while Sistema:                                      #Este while recorre todos los Sistemas guardados
             nombreSistema = Sistema.getDato().getNombre()
             print(nombreSistema)
@@ -112,23 +116,24 @@ class xml():
                     print(Altu,valor)
                     altura = altura.getSiguiente()                  #Cambiando de altura
                 dron = dron.getSiguiente()                          #Cambiando de dron
-            Sistema = Sistema.getSiguiente()                        #Cambiando de sistema
+            Sistema = Sistema.getSiguiente()                        #Cambiando de sistema'''
 
-
-        
-        lista = self.Ilist_mensajes.getInicio()
-        while lista:
-            nombre = lista.getDato().getNombreMensaje()
-            sistema = lista.getDato().getNombreSistema()
-            print(nombre,sistema)
-
-            instruccion = lista.getDato().listaInstrucciones.getInicio()
-            while instruccion:
-                dron = instruccion.getDato().getNombreDron()
-                posicion = instruccion.getDato().getPosicion()
-                print (dron,posicion)
-                instruccion = instruccion.getSiguiente()
-            lista = lista.getSiguiente()
+        ms = self.mensajesordenados.getInicio()
+        while ms:
+            lista = self.Ilist_mensajes.getInicio()
+            while lista:
+                nombre = lista.getDato().getNombreMensaje()
+                sistema = lista.getDato().getNombreSistema()
+                if ms.getDato() == nombre:
+                    print(nombre,sistema)
+                    instruccion = lista.getDato().listaInstrucciones.getInicio()
+                    while instruccion:
+                        dron = instruccion.getDato().getNombreDron()
+                        posicion = instruccion.getDato().getPosicion()
+                        print (dron,posicion)
+                        instruccion = instruccion.getSiguiente()
+                lista = lista.getSiguiente()
+            ms = ms.getSiguiente()
 
 
     def VerificarDronRepetido(self,nombre):
@@ -140,8 +145,26 @@ class xml():
             dron = dron.getSiguiente()
         return unico
 
-    def obtenerIventario(self):
-        return self.Inventario_drones
+
+    def procesarmensaje(self,mensaje):
+        mensa = self.Ilist_mensajes.getInicio()
+        sistema = self.listSistemas.getInicio()
+        listainstrucciones = None
+        listadrones = None
+        nombresistema = ""
+        
+        while mensa:
+            if mensa.getDato().getNombreMensaje() == mensaje:
+                listainstrucciones = mensa.getDato().listaInstrucciones
+                nombresistema = mensa.getDato().getNombreSistema()
+            mensa = mensa.getSiguiente()
+
+        while sistema:
+            if sistema.getDato().getNombre() == nombresistema:
+                listadrones = sistema.getDato().listaDrones
+            sistema = sistema.getSiguiente()
+        
+        procesar(listainstrucciones, listadrones)
 
 objeto = xml("archivo1.xml")
 

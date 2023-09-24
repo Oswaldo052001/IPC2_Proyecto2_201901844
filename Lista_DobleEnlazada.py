@@ -6,6 +6,7 @@ class Lista_doble():
     def __init__(self):
         self.nodoInicio = None
         self.nodoFin = None
+        self.nodoubicacion = None
         self.size = 0
 
     def getInicio(self):
@@ -13,6 +14,12 @@ class Lista_doble():
     
     def getFin(self):
         return self.nodoFin
+    
+    def getPosicion(self):
+        return self.nodoubicacion
+    
+    def setPosicion(self,nodonuevo):
+        self.nodoubicacion = nodonuevo
 
     def AgregarInicio(self,Dato):
         if self.nodoInicio is None:
@@ -32,6 +39,7 @@ class Lista_doble():
             nuevo = NodoD(dato=Dato,id=self.id)
             self.nodoFin = nuevo
             self.nodoInicio = nuevo
+            #self.nodoubicacion = nuevo
         else:     
             nuevo = NodoD(dato = Dato, id=self.id )
             self.id += 1

@@ -203,7 +203,7 @@ class Interfaz():
 
         menuMensaje.add_command(
             label="Mostrar mensajes",
-            #command=self.errores,
+            command=self.mostrarmensajes    ,
             compound=tk.LEFT
         )
 
@@ -326,7 +326,46 @@ class Interfaz():
             messagebox.showinfo(message="EL NOMBRE INGRESADO NO EXISTE", title="VUELVA A INTENTAR")  # Si hubo problema mostrará este mensaje
 
 
+    def mostrarmensajes(self):
+        mensajes = xml.mensajesordenados.getInicio()
+        if mensajes:
+            ventanamensajes = tk.Toplevel()
+            cajatexto = tk.Text(ventanamensajes)
+            self.crearVentana(ventanamensajes,500,600,"Mensajes","#2CA18C")
+            self.crearetiqueta(42, 20, "MENSAJES INGRESADOS","Gill Sans Ultra Bold Condensed",30,"#FFFD82","#2CA18C",ventanamensajes)  
+            self.crear_cuadrodeTexto(23,80,"Bahnschrift SemiCondensed",12,26,56,"#EEE2D1",cajatexto)
 
+            ms = xml.mensajesordenados.getInicio()
+            while ms:
+                lista = xml.Ilist_mensajes.getInicio()
+                while lista:
+                    nombre = lista.getDato().getNombreMensaje()
+
+                    if ms.getDato() == nombre:
+                        titulo = "\n\t• Mensaje: "+nombre+"\n"
+                        cajatexto.insert(tk.INSERT,titulo)
+
+                        instruccion = lista.getDato().listaInstrucciones.getInicio()
+                        contador = 1
+                        while instruccion:
+                            dron = instruccion.getDato().getNombreDron()
+                            posicion = instruccion.getDato().getPosicion()
+
+                            salida = "\n\t\t"+str(contador)+")"+" Instruccion: "+str(dron)+"= altura: "+str(posicion)+"\n"
+                            cajatexto.insert(tk.INSERT,salida)
+                            contador += 1
+                            instruccion = instruccion.getSiguiente()
+                    lista = lista.getSiguiente()
+                ms = ms.getSiguiente()
+                
+            cajatexto.configure(state='disabled')
+    
+            
+        else:
+            messagebox.showinfo(message="TODAVIA NO SE HA INGRESADO NINGUN SISTEMA", title="VUELVA A INTENTAR")  # Si hubo problema mostrará este mensaje
+
+
+    
     
  
 app = Interfaz()

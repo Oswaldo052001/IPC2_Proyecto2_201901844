@@ -1,17 +1,18 @@
 from Lista_Simple import ListaSimple
 from Lista_DobleEnlazada import Lista_doble
 from Alturas import Alturas
+from Cola import Cola
 
 class Dron():
 
     def __init__(self,numero,alturasMax):
         self.numerodron = numero
         self.nombre = None
-        self.alturasmax = alturasMax
         self.posicion = 0
+        self.alturasmax = alturasMax
         self.ListaAlturas = Lista_doble()
-        self.ListaInstrucciones = ListaSimple()
-        self.ListaMovimientos = ListaSimple()
+        self.ListaInstrucciones = Cola()
+        self.ListaMovimientos = Cola()
         self.asignaciondeAlturas()
         #self.imprimir()
 
@@ -23,12 +24,12 @@ class Dron():
     
     def setNombreDron(self,name):
         self.nombre = name
-    
-    def getPosicionDron(self):
+
+    def getposicion(self):
         return self.posicion
     
-    def setPosicionDron(self,posi):
-        self.posicion = posi
+    def setposicion(self,pos):
+        self.posicion = pos
     
     def agregarInstruccion(self):
         pass

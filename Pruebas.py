@@ -1,5 +1,6 @@
 from Lista_Simple import ListaSimple
 from Lista_DobleEnlazada import Lista_doble
+from Cola import Cola
 
 Valores = ListaSimple()
 
@@ -33,6 +34,15 @@ valores3.AgregarInicio(2)
 #valores3.imprimir_Adelante_atras()
 #valores3.imprimir_Atras_adelante()
 
+
+v = Cola()
+v.encolarDesorden(2)
+v.encolarDesorden(6)
+v.encolarDesorden(10)
+v.encolarDesorden(12)
+
+v.imprimir()
+v.desencolar()
 
 palabra1 = "Dronx12"
 palabra2 = "Drony12"
