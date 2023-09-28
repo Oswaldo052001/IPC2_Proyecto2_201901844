@@ -6,6 +6,7 @@ from Mensaje import MensajeS
 from Instruccion import Instruccion
 from Graph import Graph
 from ProcesarMensaje import procesar
+from Archivosalida import Archivo
 
 class xml():
     Inventario_drones = Cola()
@@ -18,7 +19,8 @@ class xml():
         self.Leerinventario()
         self.LeerSistemaDrones()
         self.LeerMensajes()
-        self.procesarmensaje("msg")
+        #self.procesarmensaje("msg")
+        #self.procesarmensaje("msg2")
         #self.prueba()
         #self.comprobar()
     
@@ -100,24 +102,6 @@ class xml():
 
     
     def comprobar(self):
-        
-        '''Sistema = self.listSistemas.getInicio()
-        while Sistema:                                      #Este while recorre todos los Sistemas guardados
-            nombreSistema = Sistema.getDato().getNombre()
-            print(nombreSistema)
-            dron = Sistema.getDato().listaDrones.getInicio()    #Obteniendo el dron inicial de este sistema
-            while dron:                                         #Este while recorre todos los drones que hay
-                nombredron = dron.getDato().getNombreDron() 
-                print(nombredron)
-                altura = dron.getDato().ListaAlturas.getInicio()    #Obteniendo la primera altura de este dron
-                while altura:                                       #Este while recorre todas las aturas del dron
-                    Altu = altura.getDato().getAltura()
-                    valor = altura.getDato().getValor()
-                    print(Altu,valor)
-                    altura = altura.getSiguiente()                  #Cambiando de altura
-                dron = dron.getSiguiente()                          #Cambiando de dron
-            Sistema = Sistema.getSiguiente()                        #Cambiando de sistema'''
-
         ms = self.mensajesordenados.getInicio()
         while ms:
             lista = self.Ilist_mensajes.getInicio()
@@ -149,12 +133,15 @@ class xml():
     def procesarmensaje(self,mensaje):
         mensa = self.Ilist_mensajes.getInicio()
         sistema = self.listSistemas.getInicio()
+        Datosmensaje = None
         listainstrucciones = None
         listadrones = None
+        sistemaencontrado = None
         nombresistema = ""
         
         while mensa:
             if mensa.getDato().getNombreMensaje() == mensaje:
+                Datosmensaje = mensa
                 listainstrucciones = mensa.getDato().listaInstrucciones
                 nombresistema = mensa.getDato().getNombreSistema()
             mensa = mensa.getSiguiente()
@@ -162,9 +149,14 @@ class xml():
         while sistema:
             if sistema.getDato().getNombre() == nombresistema:
                 listadrones = sistema.getDato().listaDrones
+                sistemaencontrado = sistema.getDato()
             sistema = sistema.getSiguiente()
         
-        procesar(listainstrucciones, listadrones)
+        procesar(listainstrucciones, listadrones, Datosmensaje)
+        archi = Archivo(sistemaencontrado,Datosmensaje)
+        archi.AgregarMensaje()
+       
 
 objeto = xml("archivo1.xml")
+
 
