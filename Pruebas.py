@@ -21,6 +21,29 @@ Valores2.agregarInicio(3)
 Valores2.agregarInicio(1)
 Valores2.agregarInicio(2)
 
+
+
+print("***********************************")
+valor = Valores2.getInicio()
+while valor:
+    print(valor.getDato())
+    valor = valor.getSiguiente()
+
+
+total = Valores2.size
+
+
+for i in range (1, total+1):
+    Valores2.eliminarInicio()
+
+
+valor2 = Valores2.getInicio()
+print("Imprimiendo valores de la lista")
+while valor2:
+    print("entro")
+    print(valor2.getDato())
+    valor2 = valor2.getSiguiente()
+
 #Valores2.imprimir()
 print("------------------------------------")
 
@@ -42,11 +65,27 @@ v.encolarDesorden(10)
 v.encolarDesorden(12)
 
 v.imprimir()
-v.desencolar()
+#v.desencolar()
+
+
+totalnuevo = v.size
+for i in range (1, totalnuevo+1):
+    v.desencolar()
+
+
+print("imprimiendo los valores de la cola")
+v.imprimir()
+
+
+
+
 
 palabra1 = "Dronx12"
 palabra2 = "Drony12"
 
+
+
+    
 if palabra1 > palabra2:
     print("palabra1 es mayor que palabra2")
 

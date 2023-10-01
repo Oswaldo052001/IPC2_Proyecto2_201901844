@@ -10,3 +10,6 @@ class Instruccion():
     
     def getPosicion(self):
         return self.posicion
+    
+    def setPosicion(self,posicion):
+        self.posicion = posicion
