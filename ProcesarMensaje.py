@@ -6,11 +6,24 @@ class procesar():
         self.mensaje = mensaje
         self.listainstrucciones = listainstrucciones
         self.listadrones = listadrones
+        self.eliminarMovimientosAnteriores()
         self.asignar()
         self.calcular()
         #self.pruebas()
 
-    
+    def eliminarMovimientosAnteriores(self):
+        dron = self.listadrones.getInicio()
+        while dron:
+            movimiento = dron.getDato().ListaMovimientos
+            total = movimiento.size
+            
+            if total != 0:
+                print("entro")
+                for i in range (1, total+1):
+                    movimiento.eliminarInicio()
+            dron = dron.getSiguiente()
+        
+
     def asignar(self):
         instruccion = self.listainstrucciones.getInicio()
         while instruccion:

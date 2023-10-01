@@ -1,4 +1,7 @@
 import tkinter as tk
+import os
+from Lista_Simple import ListaSimple
+from Cola import Cola
 from tkinter import filedialog, messagebox, ttk
 from Xml import xml
 from Graph import Graph, GraphProcesarMensaje
@@ -9,7 +12,6 @@ class Interfaz():
 
     def __init__(self) -> None:
         self.ventanaPrincipal = tk.Tk()
-        self.abrirarchivo =  False
         self.componentes()
 
 
@@ -128,6 +130,9 @@ class Interfaz():
         if tipo == "Documentacion":
             self.btn["command"] = print("hola")
 
+        if tipo == "Informacion":
+            self.btn["command"] = self.VentanaInformacion
+
         if tipo =="CrearDron":
             self.btn["command"] = self.guardarDron
 
@@ -149,6 +154,12 @@ class Interfaz():
     def CrearPestañaArchivo(self,menubase):
 
         menusarchivos = tk.Menu(menubase, tearoff=False, font = ("Avenir Next LT Pro Demi",11))
+
+        menusarchivos.add_command(
+            label="Inicializar Sistema",
+            command=self.inicializar,
+            compound=tk.LEFT
+        )
 
         menusarchivos.add_command(
             label="Cargar",
@@ -239,7 +250,19 @@ class Interfaz():
 
 
 #------------------------------------------------------ VENTANAS EMERGENTES  -------------------------------------------------------------
+    
+    def VentanaInformacion(self):
+            print(xml.existeerror)
+            ventanaInformacion = tk.Toplevel()   #Inicialiazando la ventana emergente
+            self.crearVentana(ventanaInformacion,450,200,"Informacion","#2a8c4a")  #Creando la ventana
+            self.crearetiqueta(20, 20, "INFORMACION DEL PROGRAMADOR: ","Bahnschrift SemiLight Condensed",20,"#f2be22","#2a8c4a",ventanaInformacion)  #Creando etiqueta
+            self.crearetiqueta(40, 60, "OSWALDO ANTONIO CHOC CUTERES ","Bahnschrift SemiLight Condensed",15,"white","#2a8c4a",ventanaInformacion)  #Creando etiqueta
+            self.crearetiqueta(40, 90, "201901844","Bahnschrift SemiLight Condensed",15,"white","#2a8c4a",ventanaInformacion)  #Creando etiqueta
+            self.crearetiqueta(40, 120, "4TO SEMESTRE ","Bahnschrift SemiLight Condensed",15,"white","#2a8c4a",ventanaInformacion)  #Creando etiqueta
+            self.crearetiqueta(40, 150, "INTRODUCCION A LA PROGRAMACION Y COMPUTACION 2 ","Bahnschrift SemiLight Condensed",15,"white","#2a8c4a",ventanaInformacion)  #Creando etiqueta
 
+
+           
 
     def VenanaMostrarInventario(self):                   #Esta ventana muestra el inventario de drones que hay en el archivp
         dron = xml.Inventario_drones.getInicio()
@@ -388,12 +411,32 @@ class Interfaz():
         self.ventanaPrincipal.destroy()
 
 
+    def inicializar(self):
+        xml.Inventario_drones = None
+        xml.listSistemas = None
+        xml.Ilist_mensajes = None
+        xml.mensajesordenados = None
+
+
+        xml.Inventario_drones = Cola()
+        xml.listSistemas = ListaSimple()
+        xml.Ilist_mensajes = ListaSimple()
+        xml.mensajesordenados = Cola()
+
+    
+    def abrirDocumentacion(self):
+        path = 'my_file.pdf'
+        os.system(path)
+
+     
+
+
     def leerArchivo(self):
         filename = filedialog.askopenfilename(title="buscar archivo",filetypes=(("archivos xml",'*.xml'),("todos los archivos",'*')))   #Obteniendo la dirección donde se encuentra el archivo
         try:
             xml(filename)  #Ingresando a la clase xml y almacenando la imformación del xml
             messagebox.showinfo(message="SE CARGO CORRECTAMENTE", title="Msg")  # Si no hubo problema mostrará este mensaje 
-            self.abrirarchivo = True  
+
         except:
             messagebox.showinfo(message="A OCURRIDO UN ERROR AL CARGAR EL ARCHIVO \n VUELVA A INTENTARLO", title="ERROR")  # Si hubo problema mostrará este mensaje
 
