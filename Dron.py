@@ -12,7 +12,7 @@ class Dron():
         self.alturasmax = alturasMax
         self.ListaAlturas = Lista_doble()
         self.ListaInstrucciones = Cola()
-        self.ListaMovimientos = Cola()
+        self.ListaMovimientos = ListaSimple()
         self.asignaciondeAlturas()
         #self.imprimir()
 
