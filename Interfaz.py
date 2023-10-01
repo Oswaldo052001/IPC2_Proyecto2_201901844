@@ -1,5 +1,5 @@
 import tkinter as tk
-import os
+import webbrowser
 from Lista_Simple import ListaSimple
 from Cola import Cola
 from tkinter import filedialog, messagebox, ttk
@@ -128,7 +128,7 @@ class Interfaz():
         font=("Roboto Cn",12), relief="raised", borderwidth=4, cursor="hand2") #Creación del boton
         
         if tipo == "Documentacion":
-            self.btn["command"] = print("hola")
+            self.btn["command"] = self.abrirDocumentacion
 
         if tipo == "Informacion":
             self.btn["command"] = self.VentanaInformacion
@@ -252,7 +252,6 @@ class Interfaz():
 #------------------------------------------------------ VENTANAS EMERGENTES  -------------------------------------------------------------
     
     def VentanaInformacion(self):
-            print(xml.existeerror)
             ventanaInformacion = tk.Toplevel()   #Inicialiazando la ventana emergente
             self.crearVentana(ventanaInformacion,450,200,"Informacion","#2a8c4a")  #Creando la ventana
             self.crearetiqueta(20, 20, "INFORMACION DEL PROGRAMADOR: ","Bahnschrift SemiLight Condensed",20,"#f2be22","#2a8c4a",ventanaInformacion)  #Creando etiqueta
@@ -425,8 +424,8 @@ class Interfaz():
 
     
     def abrirDocumentacion(self):
-        path = 'my_file.pdf'
-        os.system(path)
+        path = 'Documentación\Documentación Proyecto.pdf'
+        webbrowser.open_new(path)
 
      
 
@@ -451,13 +450,11 @@ class Interfaz():
                 if dron.getDato() == name:
                     unico = False
                     messagebox.showinfo(message="ESE NOMBRE YA EXISTE", title="ERROR")  # Si hubo problema mostrará este mensaje
-                    self.VentanaNuevoDron()
                 dron = dron.getSiguiente()
         
             if unico:
                 xml.Inventario_drones.enconlar(name)
                 messagebox.showinfo(message="SE AGREGÓ CORRECTAMENTE", title="EXITO")  # Si hubo problema mostrará este mensaje
-                self.VentanaNuevoDron()
         else:
             messagebox.showinfo(message="NO HAN INGRESADO NINGUN NOMBRE", title="ERROR")  # Si hubo problema mostrará este mensaje
 
@@ -508,12 +505,13 @@ class Interfaz():
                     nombresistema = mensa.getDato().getNombreSistema()
                 mensa = mensa.getSiguiente()
 
+        
             while sistema:
                 if sistema.getDato().getNombre() == nombresistema:
                     listadrones = sistema.getDato().listaDrones
                     self.sistemaMensaje = sistema.getDato()
                 sistema = sistema.getSiguiente()
-            
+
             procesar(listainstrucciones, listadrones, self.datosMensaje)
             archi = Archivo(self.sistemaMensaje,self.datosMensaje)
             archi.AgregarMensaje()

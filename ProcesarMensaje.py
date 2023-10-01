@@ -1,5 +1,7 @@
 
 from Movimientos import Movimientos
+
+
 class procesar():
 
     def __init__(self, listainstrucciones, listadrones, mensaje):
@@ -18,7 +20,6 @@ class procesar():
             total = movimiento.size
             
             if total != 0:
-                print("entro")
                 for i in range (1, total+1):
                     movimiento.eliminarInicio()
             dron = dron.getSiguiente()
@@ -35,7 +36,6 @@ class procesar():
                     dron.getDato().ListaInstrucciones.encolarDesorden(posicion)
                 dron = dron.getSiguiente()
             instruccion = instruccion.getSiguiente()
-
 
 
     def calcular(self):
