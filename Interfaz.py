@@ -465,13 +465,16 @@ class Interfaz():
         sistema = xml.listSistemas.getInicio()
         encontro = False
 
-        while sistema:
-            if sistema.getDato().getNombre().lower() == name.lower():
-                encontro = True
-                grafica = Graph(sistema.getDato(),"Sistema_"+name)
-                grafica.crearGraficaOriginal()
-                messagebox.showinfo(message="SE GRAFICÓ CORRECTAMENTE", title="REALIZADO")  # Si hubo problema mostrará este mensaje
-            sistema = sistema.getSiguiente()
+        try:
+            while sistema:
+                if sistema.getDato().getNombre().lower() == name.lower():
+                    encontro = True
+                    grafica = Graph(sistema.getDato(),"Sistema_"+name)
+                    grafica.crearGraficaOriginal()
+                    messagebox.showinfo(message="SE GRAFICÓ CORRECTAMENTE", title="REALIZADO")  # Si hubo problema mostrará este mensaje
+                sistema = sistema.getSiguiente()
+        except:
+            messagebox.showinfo(message="OCURRIO UN ERROR AL GRAFICAR REVISE EL ARCHIVO", title="ERROR")  # Si hubo problema mostrará este mensaje
         
         if encontro == False:
             messagebox.showinfo(message="EL NOMBRE INGRESADO NO EXISTE", title="VUELVA A INTENTAR")  # Si hubo problema mostrará este mensaje    
@@ -512,27 +515,30 @@ class Interfaz():
                     self.sistemaMensaje = sistema.getDato()
                 sistema = sistema.getSiguiente()
 
-            procesar(listainstrucciones, listadrones, self.datosMensaje)
-            archi = Archivo(self.sistemaMensaje,self.datosMensaje)
-            archi.AgregarMensaje()
+            try:
+                procesar(listainstrucciones, listadrones, self.datosMensaje)
+                archi = Archivo(self.sistemaMensaje,self.datosMensaje)
+                archi.AgregarMensaje()
 
-            sistema = self.datosMensaje.getDato().getNombreSistema()
-            tiempo = self.datosMensaje.getDato().getTeimpoObtimo()
-            mensajedecifrado = self.datosMensaje.getDato().getMensajedecifrado()
-            
-            self.cajaSistema.config(state=tk.NORMAL)
-            self.cajaTiempo.config(state=tk.NORMAL)
-            self.cajaMensaje.config(state=tk.NORMAL)
+                sistema = self.datosMensaje.getDato().getNombreSistema()
+                tiempo = self.datosMensaje.getDato().getTeimpoObtimo()
+                mensajedecifrado = self.datosMensaje.getDato().getMensajedecifrado()
+                
+                self.cajaSistema.config(state=tk.NORMAL)
+                self.cajaTiempo.config(state=tk.NORMAL)
+                self.cajaMensaje.config(state=tk.NORMAL)
 
-            self.cajaSistema.insert(0,sistema)
-            self.cajaTiempo.insert(0,str(tiempo))
-            self.cajaMensaje.insert(0,mensajedecifrado)
+                self.cajaSistema.insert(0,sistema)
+                self.cajaTiempo.insert(0,str(tiempo))
+                self.cajaMensaje.insert(0,mensajedecifrado)
 
-            self.cajaSistema.config(state=tk.DISABLED)
-            self.cajaTiempo.config(state=tk.DISABLED)
-            self.cajaMensaje.config(state=tk.DISABLED)
+                self.cajaSistema.config(state=tk.DISABLED)
+                self.cajaTiempo.config(state=tk.DISABLED)
+                self.cajaMensaje.config(state=tk.DISABLED)
 
-            self.mensajeprocesado = True
+                self.mensajeprocesado = True
+            except:
+                messagebox.showinfo(message="A OCURRIDO UN ERROR AL PROCESAR EL ARCHIVO \n VUELVA A INTENTARLO", title="ERROR")  # Si hubo problema mostrará este mensaje
             
 
     def graficarOperaciones(self):

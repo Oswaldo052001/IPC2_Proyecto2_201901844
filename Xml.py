@@ -24,7 +24,7 @@ class xml():
         #self.procesarmensaje("msg")
         #self.procesarmensaje("msg2")
         #self.prueba()
-        self.comprobar2()
+        #self.comprobar2()
     
 
     def prueba(self):
